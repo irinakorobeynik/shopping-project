@@ -2,7 +2,6 @@ const itemForm = document.querySelector('#item-form');
 const itemInput = document.querySelector('#item-input');
 const itemList = document.querySelector('#item-list');
 const clearBtn = document.querySelector('#clear');
-
 const filter = document.querySelector('#filter');
 
 function createIcon(classes) {
@@ -51,11 +50,26 @@ function removeItem(e) {
 }
 
 function removeAllItem(e) {
-    while (itemList.firstChild) {
-        
+    while (itemList.firstChild) { 
         itemList.removeChild(itemList.firstChild);
     }
+
     checkUI();
+}
+
+function filterItems(e) {
+    const item = itemList.querySelectorAll('li');
+    const text = e.target.value.toLowerCase();
+    item.forEach(item => {
+        const itemName = item.firstChild.textContent.toLowerCase();
+        if (itemName.indexOf(text) != -1){
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+            checkUI();
+        }
+        
+    })
 }
 
 function checkUI() {
@@ -75,5 +89,6 @@ const item = itemList.querySelectorAll('li');
 itemForm.addEventListener('submit', addItem);
 itemList.addEventListener('click', removeItem);
 clearBtn.addEventListener('click', removeAllItem);
+filter.addEventListener('input', filterItems)
 
 checkUI();

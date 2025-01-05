@@ -41,20 +41,32 @@ function onAddItemSubmit(e) {
     
 }
 
-function removeItem(e) {
-    if (e.target.parentElement.classList.contains('remove-item')) {
-        if (confirm('Are you sure?')) {
-            e.target.parentElement.parentElement.remove();  
-            checkUI();
-        }
-       
-}    
+function onclickItem(e) {
+    if (e.target.parentElement.classList.contains('remove-item')) { }
+    removeItem(e.target.parentElement.parentElement);
+
+    
+}
+
+function removeItem(item) {
+    if (confirm('Are you sure?')) {
+        item.remove();
+        removeItemFromStorage(item.textContent);
+        checkUI();
+    } 
+}
+
+function removeItemFromStorage(item) {
+    let itemsFromStorage = getItemsFromStorage();
+    itemsFromStorage = itemsFromStorage.filter(i => i != item);
+    localStorage.setItem('items', JSON.stringify(itemsFromStorage));
 }
 
 function removeAllItem(e) {
     while (itemList.firstChild) { 
         itemList.removeChild(itemList.firstChild);
     }
+    localStorage.clear();
 
     checkUI();
 }
@@ -112,7 +124,7 @@ function getItemsFromStorage() {
 
 function init(params) {
     itemForm.addEventListener('submit', onAddItemSubmit);
-itemList.addEventListener('click', removeItem);
+itemList.addEventListener('click', onclickItem);
 clearBtn.addEventListener('click', removeAllItem);
 filter.addEventListener('input', filterItems);
 document.addEventListener('DOMContentLoaded', displayItems)

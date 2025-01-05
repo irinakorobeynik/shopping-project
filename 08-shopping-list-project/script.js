@@ -3,6 +3,8 @@ const itemInput = document.querySelector('#item-input');
 const itemList = document.querySelector('#item-list');
 const clearBtn = document.querySelector('#clear');
 const filter = document.querySelector('#filter');
+const formBtn = itemForm.querySelector('button');
+let isEditMode = false;
 
 function displayItems() {
     const itemsFromStorage = getItemsFromStorage();
@@ -34,6 +36,13 @@ function onAddItemSubmit(e) {
         alert('Please add an Item');
         return;
     }
+    if (isEditMode) {
+        const itemToEdit = itemList.querySelector('.edit-mode');
+        removeItemFromStorage(itemToEdit.textContent);
+        itemToEdit.classList.remove('edit-mode');
+        itemToEdit.remove();
+        isEditMode = false;
+    }
     addItemToDOM(newItem);
     addItemToStorage(newItem);
     checkUI();
@@ -42,9 +51,21 @@ function onAddItemSubmit(e) {
 }
 
 function onclickItem(e) {
-    if (e.target.parentElement.classList.contains('remove-item')) { }
-    removeItem(e.target.parentElement.parentElement);
+    if (e.target.parentElement.classList.contains('remove-item')) {
+        removeItem(e.target.parentElement.parentElement);
+    } else {
+        setItemToEdit(e.target);
+    }   
+}
 
+
+function setItemToEdit(item) {
+    isEditMode = true;
+    itemList.querySelectorAll('li').forEach(i => i.classList.remove('edit-mode'));
+    item.classList.add('edit-mode');
+    formBtn.innerHTML = '<i class="fa-solid fa-pen"></i>  Update Item';
+    itemInput.value = item.textContent;
+    formBtn.style.backgroundColor = '#228B22';
     
 }
 
@@ -86,6 +107,7 @@ function filterItems(e) {
 }
 
 function checkUI() {
+    itemInput.value = '';
 const item = itemList.querySelectorAll('li');
     if (item.length === 0) { 
         clearBtn.style.display = 'none';
@@ -94,6 +116,10 @@ const item = itemList.querySelectorAll('li');
         clearBtn.style.display = 'block';
         filter.style.display = 'block';
     }
+
+    isEditMode = false;
+    formBtn.innerHTML = '<i class = "fa-solid fa-plus"></i> Add Item';
+    formBtn.style.backgroundColor = '#333';
 }
 
 function addItemToDOM(item) {
